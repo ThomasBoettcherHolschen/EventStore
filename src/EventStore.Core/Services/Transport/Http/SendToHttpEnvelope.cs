@@ -11,35 +11,39 @@ namespace EventStore.Core.Services.Transport.Http
 {
     public class HttpResponseConfiguratorArgs
     {
+        public readonly string Prefix;
         public readonly Uri RequestedUrl;
         public readonly ICodec ResponseCodec;
 
-        public HttpResponseConfiguratorArgs(Uri requestedUrl, ICodec responseCodec)
+        public HttpResponseConfiguratorArgs(string prefix, Uri requestedUrl, ICodec responseCodec)
         {
+            Prefix = prefix;
             RequestedUrl = requestedUrl;
             ResponseCodec = responseCodec;
         }
 
         public static implicit operator HttpResponseConfiguratorArgs(HttpEntityManager entity)
         {
-            return new HttpResponseConfiguratorArgs(entity.RequestedUrl, entity.ResponseCodec);
+            return new HttpResponseConfiguratorArgs(entity.Prefix, entity.RequestedUrl, entity.ResponseCodec);
         }
     }
 
     public class HttpResponseFormatterArgs
     {
+        public readonly string Prefix;
         public readonly Uri RequestedUrl;
         public readonly ICodec ResponseCodec;
 
-        public HttpResponseFormatterArgs(Uri requestedUrl, ICodec responseCodec)
+        public HttpResponseFormatterArgs(string prefix, Uri requestedUrl, ICodec responseCodec)
         {
+            Prefix = prefix;
             RequestedUrl = requestedUrl;
             ResponseCodec = responseCodec;
         }
 
         public static implicit operator HttpResponseFormatterArgs(HttpEntityManager entity)
         {
-            return new HttpResponseFormatterArgs(entity.RequestedUrl, entity.ResponseCodec);
+            return new HttpResponseFormatterArgs(entity.Prefix, entity.RequestedUrl, entity.ResponseCodec);
         }
     }
 

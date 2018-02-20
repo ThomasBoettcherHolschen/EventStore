@@ -83,7 +83,7 @@ namespace EventStore.Core.Services.Transport.Http.Controllers
         protected static string MakeUrl(HttpEntityManager http, string path)
         {
             var hostUri = http.RequestedUrl;
-            return new UriBuilder(hostUri.Scheme, hostUri.Host, hostUri.Port, path).Uri.AbsoluteUri;
+            return new UriBuilder(hostUri.Scheme, hostUri.Host, hostUri.Port, http.Prefix + path).Uri.AbsoluteUri;
         }
     }
 }

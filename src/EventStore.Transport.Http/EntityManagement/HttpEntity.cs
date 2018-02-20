@@ -11,6 +11,7 @@ namespace EventStore.Transport.Http.EntityManagement
     public class HttpEntity
     {
         private readonly bool _logHttpRequests;
+        public readonly string Prefix;
         public readonly Uri RequestedUrl;
 
         public readonly HttpListenerRequest Request;
@@ -23,6 +24,7 @@ namespace EventStore.Transport.Http.EntityManagement
             Ensure.NotNull(response, "response");
 
             _logHttpRequests = logHttpRequests;
+            Prefix = GetPrefix(request.Headers);
             RequestedUrl = BuildRequestedUrl(request.Url, request.Headers, advertiseAsAddress, advertiseAsPort);
             Request = request;
             Response = response;
@@ -78,12 +80,24 @@ namespace EventStore.Transport.Http.EntityManagement
             {
                 uriBuilder.Path = forwardedPrefixHeaderValue + uriBuilder.Path;
             }
+            
             return uriBuilder.Uri;
+        }
+
+        private string GetPrefix(NameValueCollection requestHeaders)
+        {
+            var forwardedPrefixHeaderValue = requestHeaders[ProxyHeaders.XForwardedPrefix];
+            if (!string.IsNullOrEmpty(forwardedPrefixHeaderValue))
+            {
+                return forwardedPrefixHeaderValue;
+            }
+            return String.Empty;
         }
 
         private HttpEntity(IPrincipal user, bool logHttpRequests)
         {
             RequestedUrl = null;
+            Prefix = null;
 
             Request = null;
             Response = null;
@@ -94,6 +108,7 @@ namespace EventStore.Transport.Http.EntityManagement
         private HttpEntity(HttpEntity httpEntity, IPrincipal user, bool logHttpRequests)
         {
             RequestedUrl = httpEntity.RequestedUrl;
+            Prefix = httpEntity.Prefix;
 
             Request = httpEntity.Request;
             Response = httpEntity.Response;
